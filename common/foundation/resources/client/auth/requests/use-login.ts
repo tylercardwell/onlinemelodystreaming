@@ -37,6 +37,13 @@ export function useHandleLoginSuccess() {
       if (redirectUri.includes('/oauth/')) {
         window.location.href = redirectUri;
       } else {
+        // A normal document request always contains bootstrap data. Do not
+        // replace the currently valid store with an incomplete login response,
+        // otherwise providers that depend on settings will crash after login.
+        if (!hasSettingsBootstrapData(response.bootstrapData)) {
+          window.location.assign(redirectUri);
+          return;
+        }
         setBootstrapData(response.bootstrapData);
         // get redirect uri after setting bootstrap data so it includes the new url from bootstrap data
         redirectUri = response.url?.intended ?? getRedirectUri();
@@ -49,4 +56,17 @@ export function useHandleLoginSuccess() {
     },
     [navigate, getRedirectUri],
   );
+}
+
+function hasSettingsBootstrapData(data: unknown): data is string {
+  if (typeof data !== 'string') {
+    return false;
+  }
+
+  try {
+    const decoded = JSON.parse(data);
+    return Boolean(decoded && typeof decoded === 'object' && decoded.settings);
+  } catch {
+    return false;
+  }
 }

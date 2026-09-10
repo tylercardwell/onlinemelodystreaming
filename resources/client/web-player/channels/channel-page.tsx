@@ -6,6 +6,7 @@ import {AdHost} from '@common/admin/ads/ad-host';
 import {Channel} from '@common/channels/channel';
 import {useChannel} from '@common/channels/requests/use-channel';
 import {PageMetaTags} from '@common/http/page-meta-tags';
+import {NotFoundPage} from '@common/ui/not-found-page/not-found-page';
 import {useMemo} from 'react';
 
 type Props = {
@@ -21,10 +22,18 @@ export function Component({slugOrId}: Props) {
 
 function ChannelPage({slugOrId}: Props) {
   const query = useChannel(slugOrId, 'channelPage');
+  const channel = query.data?.channel as Channel<ChannelContentModel> | undefined;
+
+  // Settings can retain an ID for a channel that was removed during a
+  // database reset. Render a normal not-found page instead of crashing while
+  // attempting to access its content.
+  if (!channel) {
+    return <NotFoundPage />;
+  }
 
   const randomImage = useMemo(() => {
-    return getRandomImage(query.data.channel as Channel<ChannelContentModel>);
-  }, [query.data.channel]);
+    return getRandomImage(channel);
+  }, [channel]);
 
   return (
     <>
@@ -35,9 +44,9 @@ function ChannelPage({slugOrId}: Props) {
       <div className="relative pb-6">
         <AdHost slot="general_top" className="mb-8.5" />
         <ChannelContent
-          channel={query.data.channel as Channel<ChannelContentModel>}
+          channel={channel}
           // set key to force re-render when channel changes
-          key={query.data.channel.id}
+          key={channel.id}
         />
         <AdHost slot="general_bottom" className="mt-8.5" />
       </div>

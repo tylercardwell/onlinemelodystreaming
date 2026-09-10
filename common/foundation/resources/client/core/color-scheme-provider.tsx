@@ -21,7 +21,9 @@ export function ColorSchemeProvider({
   children: any;
   cookieName?: string;
 }) {
-  const {themes} = useSettings();
+  // The login flow can refresh bootstrap data while the provider is mounted.
+  // Use the system preference until a complete settings payload is available.
+  const {themes} = useSettings() ?? {};
   const [appliedScheme, setAppliedScheme] = useState<
     Omit<ColorScheme, 'system'>
   >(() =>
