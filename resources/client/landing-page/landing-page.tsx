@@ -17,6 +17,7 @@ import {TRACK_MODEL} from '@app/web-player/tracks/track';
 import {TrackImage} from '@app/web-player/tracks/track-image/track-image';
 import {getTrackLink, TrackLink} from '@app/web-player/tracks/track-link';
 import {UserImage} from '@app/web-player/users/user-image';
+import {KineticGallerySection} from '@app/landing-page/kinetic-gallery-section';
 import {
   getUserProfileLink,
   UserProfileLink,
@@ -79,9 +80,10 @@ const defaultIcons: Record<string, ReactElement> = {
 
 const sectionRenderers: Record<
   string,
-  ComponentType<{config: ChannelSectionProps['config']; index: number}>
+  ComponentType<{config: any; index: number}>
 > = {
   channel: ChannelSection,
+  'kinetic-gallery': KineticGallerySection,
 };
 
 type HeroSearchBarProps = {
