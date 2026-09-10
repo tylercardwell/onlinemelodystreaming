@@ -1,10 +1,14 @@
 import {Buttons} from '@common/ui/landing-page/hero/shared';
+import {LandingPageContext} from '@common/ui/landing-page/landing-page-context';
 import {
   LandingPageButtonConfig,
   LandingPageImageConfig,
 } from '@common/ui/landing-page/landing-page-config';
+import {Navbar} from '@common/ui/navigation/navbar/navbar';
 import {Trans} from '@ui/i18n/trans';
 import {cn} from '@ui/utils/cn';
+import {ChevronLeftIcon, ChevronRightIcon} from 'lucide-react';
+import {useContext, useEffect, useState} from 'react';
 
 export type KineticGalleryConfig = {
   name: 'kinetic-gallery';
@@ -17,75 +21,112 @@ export type KineticGalleryConfig = {
 
 type KineticGalleryCard = {
   title?: string;
+  description?: string;
   image?: LandingPageImageConfig;
 };
 
 export function KineticGallerySection({config}: {config: KineticGalleryConfig}) {
-  const cards = config.cards?.filter(card => card.image?.src) ?? [];
+  const {heroSearchBarSlot} = useContext(LandingPageContext);
+  const SearchBarCmp = heroSearchBarSlot ?? null;
+  const slides = config.cards?.filter(card => card.image?.src) ?? [];
+  const [activeSlide, setActiveSlide] = useState(0);
+  const active = slides[activeSlide];
+
+  useEffect(() => {
+    if (slides.length < 2) return;
+    const timer = window.setInterval(() => {
+      setActiveSlide(current => (current + 1) % slides.length);
+    }, 6500);
+    return () => window.clearInterval(timer);
+  }, [slides.length]);
+
+  if (!slides.length) {
+    return (
+      <section className="bg-background px-6 py-24 text-center text-muted-foreground">
+        <Trans message="Add carousel artwork to this section." />
+      </section>
+    );
+  }
 
   return (
-    <section className="overflow-hidden bg-background py-20 text-foreground sm:py-28">
-      <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-2 lg:gap-20 lg:px-8">
-        <div className="max-w-xl">
+    <section className="bg-background px-0 py-0 text-white sm:px-3 sm:py-8">
+      <div className="relative isolate mx-auto min-h-150 max-w-[1440px] overflow-hidden bg-card sm:min-h-175 sm:rounded-3xl">
+        {slides.map((slide, index) => (
+          <img
+            key={slide.image!.src}
+            src={slide.image!.src}
+            alt=""
+            className={cn(
+              'absolute inset-0 size-full object-cover transition-all duration-1000 ease-out',
+              index === activeSlide
+                ? 'scale-100 opacity-100'
+                : 'scale-105 opacity-0',
+            )}
+          />
+        ))}
+        <div className="absolute inset-0 bg-linear-to-r from-black/85 via-black/45 to-black/5" />
+        <Navbar.Root className="absolute inset-x-0 top-0 z-20 m-3 min-h-20 bg-transparent sm:m-5">
+          <Navbar.Logo color="light" url="/" />
+          <Navbar.Menu position="landing-page-navbar" />
+          <Navbar.Content className="ml-auto">
+            <Navbar.AuthContent />
+          </Navbar.Content>
+        </Navbar.Root>
+        <div className="relative flex min-h-150 max-w-2xl flex-col justify-end px-6 pb-18 pt-28 sm:min-h-175 sm:px-12 sm:pb-24 sm:pt-32">
           {config.eyebrow ? (
             <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
               <Trans message={config.eyebrow} />
             </p>
           ) : null}
-          {config.title ? (
-            <h2 className="mt-4 text-5xl font-semibold tracking-[-0.06em] text-balance sm:text-7xl">
-              <Trans message={config.title} />
-            </h2>
+          <h2 className="mt-3 text-5xl font-black tracking-[-0.07em] text-balance uppercase sm:text-7xl">
+            <Trans message={active.title || config.title || ''} />
+          </h2>
+          <p className="mt-5 max-w-md text-base font-medium text-white/85 sm:text-lg">
+            <Trans message={active.description || config.description || ''} />
+          </p>
+          {SearchBarCmp ? (
+            <div className="light mt-7 max-w-xl text-muted-foreground">
+              <SearchBarCmp background="bg-white/95" config={config as any} />
+            </div>
           ) : null}
-          {config.description ? (
-            <p className="mt-6 max-w-lg text-lg leading-8 text-muted-foreground">
-              <Trans message={config.description} />
-            </p>
-          ) : null}
-          <Buttons
-            buttons={config.buttons ?? []}
-            className="mt-9 flex-wrap gap-3"
-          />
-        </div>
-
-        <div className="relative mx-auto flex size-75 items-center justify-center sm:size-120 lg:size-145">
-          <div className="absolute inset-[18%] rounded-full bg-primary/15 blur-3xl" />
-          <div className="relative size-full [--orbit-radius:6.5rem] motion-safe:animate-[spin_32s_linear_infinite] motion-reduce:animate-none sm:[--orbit-radius:10rem] lg:[--orbit-radius:13rem]">
-            {cards.map((card, index) => {
-              const angle = (360 / cards.length) * index;
-              return (
-                <div
-                  key={`${card.image?.src}-${index}`}
-                  className="absolute top-1/2 left-1/2 w-23 -translate-x-1/2 -translate-y-1/2 sm:w-34 lg:w-40"
-                  style={{
-                    transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(-1 * var(--orbit-radius)))`,
-                  }}
-                >
-                  <div className="motion-safe:animate-[spin_32s_linear_infinite_reverse] motion-reduce:animate-none">
-                    <img
-                      src={card.image!.src}
-                      alt={card.title || ''}
-                      className="aspect-square w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/15"
-                    />
-                    {card.title ? (
-                      <p className="mt-2 truncate text-center text-xs font-medium text-muted-foreground">
-                        <Trans message={card.title} />
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div
-            className={cn(
-              'relative flex size-29 items-center justify-center rounded-full bg-card text-center text-sm font-semibold shadow-2xl ring-1 ring-border sm:size-43',
-              !cards.length && 'text-muted-foreground',
-            )}
-          >
-            {cards.length ? <Trans message="Play what moves you" /> : <Trans message="Add gallery artwork" />}
+          <Buttons buttons={config.buttons ?? []} className="mt-8 flex-wrap gap-3" />
+          <div className="mt-9 flex items-center gap-2">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                aria-label={`Show slide ${index + 1}`}
+                onClick={() => setActiveSlide(index)}
+                className={cn(
+                  'size-2.5 rounded-full border border-white transition',
+                  index === activeSlide ? 'bg-white' : 'bg-transparent',
+                )}
+              />
+            ))}
           </div>
         </div>
+        {slides.length > 1 ? (
+          <div className="absolute right-5 bottom-5 flex gap-2">
+            <button
+              type="button"
+              aria-label="Previous slide"
+              onClick={() =>
+                setActiveSlide((activeSlide + slides.length - 1) % slides.length)
+              }
+              className="rounded-full bg-black/35 p-2.5 backdrop-blur transition hover:bg-black/60"
+            >
+              <ChevronLeftIcon className="size-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="Next slide"
+              onClick={() => setActiveSlide((activeSlide + 1) % slides.length)}
+              className="rounded-full bg-black/35 p-2.5 backdrop-blur transition hover:bg-black/60"
+            >
+              <ChevronRightIcon className="size-5" />
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   );

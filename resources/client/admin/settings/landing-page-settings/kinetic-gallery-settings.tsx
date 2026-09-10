@@ -35,17 +35,21 @@ export function KineticGallerySettings({index}: {index: number}) {
       </HookForm.Field>
 
       <Field.Separator />
-      <Field.Title><Trans message="Rotating artwork" /></Field.Title>
+      <Field.Title><Trans message="Carousel slides" /></Field.Title>
       {cards.fields.map((card, cardIndex) => (
         <div key={card.id} className="rounded-lg border p-3">
           <HookForm.Field name={`${prefix}.cards.${cardIndex}.title`}>
-            <Field.Label><Trans message="Artwork title" /></Field.Label>
+            <Field.Label><Trans message="Slide title" /></Field.Label>
             <Input />
+          </HookForm.Field>
+          <HookForm.Field name={`${prefix}.cards.${cardIndex}.description`}>
+            <Field.Label><Trans message="Slide description" /></Field.Label>
+            <Textarea rows={3} />
           </HookForm.Field>
           <div className="mt-3">
             <LandingPageImageSelector
               formPrefix={`${prefix}.cards.${cardIndex}`}
-              label={<Trans message="Artwork image" />}
+              label={<Trans message="Slide image" />}
             />
           </div>
           <Button
@@ -57,7 +61,7 @@ export function KineticGallerySettings({index}: {index: number}) {
             onClick={() => cards.remove(cardIndex)}
           >
             <MinusIcon />
-            <Trans message="Remove artwork" />
+            <Trans message="Remove slide" />
           </Button>
         </div>
       ))}
@@ -70,7 +74,7 @@ export function KineticGallerySettings({index}: {index: number}) {
         onClick={() => cards.append({})}
       >
         <PlusIcon />
-        <Trans message="Add artwork" />
+        <Trans message="Add slide" />
       </Button>
 
       <Field.Separator />
