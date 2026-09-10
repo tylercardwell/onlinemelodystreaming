@@ -76,7 +76,13 @@
     "webklex/php-imap": "^6.1",
     "willdurand/email-reply-parser": "^2.10",
     "willdurand/negotiation": "^3.1",
-    "zbateson/mail-mime-parser": "^3.0"
+    "zbateson/mail-mime-parser": "^3.0",
+    "ext-bcmath": "*",
+    "ext-ftp": "*",
+    "ext-gd": "*",
+    "ext-pcntl": "*",
+    "ext-posix": "*",
+    "ext-zip": "*"
   },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^3.1",
