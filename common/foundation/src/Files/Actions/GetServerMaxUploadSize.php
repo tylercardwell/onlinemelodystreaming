@@ -19,7 +19,12 @@ class GetServerMaxUploadSize
                 return $value['bytes'] > 0;
             });
 
-        return $configValues->where('bytes', $configValues->min('bytes'))->first();
+        return $configValues
+            ->where('bytes', $configValues->min('bytes'))
+            ->first() ?? [
+            'original' => 'unlimited',
+            'bytes' => PHP_INT_MAX,
+        ];
     }
 
     /**
