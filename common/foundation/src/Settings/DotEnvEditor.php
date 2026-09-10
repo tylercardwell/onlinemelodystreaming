@@ -13,15 +13,25 @@ class DotEnvEditor
 
     public function load(): array
     {
-        $dotEnv = Dotenv::create(
-            RepositoryBuilder::createWithNoAdapters()->make(),
-            [base_path()],
-            $this->fileName,
-        );
-        $values = $dotEnv->load();
+        // Railway exposes configured variables through the process environment,
+        // but does not create an on-disk .env file. The settings UI still needs
+        // to read those values even when that file is absent.
+        if (!file_exists(base_path($this->fileName))) {
+            $values = getenv();
+        } else {
+            $dotEnv = Dotenv::create(
+                RepositoryBuilder::createWithNoAdapters()->make(),
+                [base_path()],
+                $this->fileName,
+            );
+            $values = $dotEnv->load();
+        }
         $lowercaseValues = [];
 
         foreach ($values as $key => $value) {
+            if (!is_string($value)) {
+                continue;
+            }
             if (strtolower($value) === 'null') {
                 $lowercaseValues[strtolower($key)] = null;
             } elseif (strtolower($value) === 'false') {
