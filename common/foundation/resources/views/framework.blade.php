@@ -51,6 +51,18 @@
                 });
             }
         </script>
+    @else
+        <script>
+            // A service worker may remain registered after offline mode is
+            // disabled. Remove it so it cannot keep serving stale build URLs.
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.getRegistrations().then(registrations => {
+                        registrations.forEach(registration => registration.unregister());
+                    });
+                });
+            }
+        </script>
     @endif
 
     <meta

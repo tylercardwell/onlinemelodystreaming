@@ -4,7 +4,6 @@ import {
   LandingPageButtonConfig,
   LandingPageImageConfig,
 } from '@common/ui/landing-page/landing-page-config';
-import {Navbar} from '@common/ui/navigation/navbar/navbar';
 import {Trans} from '@ui/i18n/trans';
 import {cn} from '@ui/utils/cn';
 import {ChevronLeftIcon, ChevronRightIcon} from 'lucide-react';
@@ -65,14 +64,7 @@ export function KineticGallerySection({config}: {config: KineticGalleryConfig}) 
           />
         ))}
         <div className="absolute inset-0 bg-linear-to-r from-black/85 via-black/45 to-black/5" />
-        <Navbar.Root className="absolute inset-x-0 top-0 z-20 m-3 min-h-20 bg-transparent sm:m-5">
-          <Navbar.Logo color="light" url="/" />
-          <Navbar.Menu position="landing-page-navbar" />
-          <Navbar.Content className="ml-auto">
-            <Navbar.AuthContent />
-          </Navbar.Content>
-        </Navbar.Root>
-        <div className="relative flex min-h-150 max-w-2xl flex-col justify-end px-6 pb-18 pt-28 sm:min-h-175 sm:px-12 sm:pb-24 sm:pt-32">
+        <div className="relative flex min-h-150 max-w-2xl flex-col justify-end px-6 pb-18 pt-16 sm:min-h-175 sm:px-12 sm:pb-24 sm:pt-20">
           {config.eyebrow ? (
             <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
               <Trans message={config.eyebrow} />
