@@ -1,7 +1,6 @@
 import {authDropdownIcons} from '@app/auth/auth-dropdown-icons';
 import {useLogout} from '@common/auth/requests/use-logout';
 import {useAuth} from '@common/auth/use-auth';
-import {ColorSchemeContext} from '@common/core/color-scheme-provider';
 import {SiteConfigContext} from '@common/core/settings/site-config-context';
 import {MenuItemIcon} from '@common/menus/custom-menu';
 import {MenuItemConfig} from '@common/menus/menu-config';
@@ -10,14 +9,8 @@ import {useNavigate} from '@common/ui/navigation/use-navigate';
 import {Dropdown} from '@shadcn/dropdown/dropdown';
 import {Trans} from '@ui/i18n/trans';
 import {useSettings} from '@ui/settings/use-settings';
-import {
-  BellIcon,
-  CircleUserIcon,
-  LogOutIcon,
-  MoonIcon,
-  SunIcon,
-} from 'lucide-react';
-import {ComponentProps, ReactElement, use, useContext} from 'react';
+import {BellIcon, CircleUserIcon, LogOutIcon} from 'lucide-react';
+import {ComponentProps, ReactElement, useContext} from 'react';
 
 interface Props {
   children: ReactElement;
@@ -36,10 +29,9 @@ export function NavbarAuthMenu({
   const {auth} = useContext(SiteConfigContext);
   const logout = useLogout();
   const menu = useCustomMenu('auth-dropdown');
-  const {notifications, themes} = useSettings();
+  const {notifications} = useSettings();
   const {user} = useAuth();
   const navigate = useNavigate();
-  const {colorScheme, setColorScheme} = use(ColorSchemeContext);
   if (!user) return null;
   const hasUnreadNotif = !!user.unread_notifications_count;
 
@@ -93,21 +85,6 @@ export function NavbarAuthMenu({
         )}
         {items}
         {notifications?.integrated ? notifMenuItem : undefined}
-        {themes?.user_change && (
-          <Dropdown.Item
-            onClick={() => {
-              setColorScheme(colorScheme === 'light' ? 'dark' : 'light');
-            }}
-          >
-            {colorScheme === 'light' ? <MoonIcon /> : <SunIcon />}
-            {colorScheme === 'light' ? (
-              <Trans message="Dark mode" />
-            ) : (
-              <Trans message="Light mode" />
-            )}
-          </Dropdown.Item>
-        )}
-
         <Dropdown.Item
           onClick={() => {
             logout.mutate();

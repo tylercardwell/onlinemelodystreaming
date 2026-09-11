@@ -122,16 +122,6 @@ class BaseBootstrapData implements BootstrapData
         string $schemeCookieName = 'be-color-scheme',
     ): void {
         $themes = $this->getThemes();
-        $adminSelectedDefaultScheme =
-            settings($defaultSchemeSetting) ?? 'system'
-                ? 'light'
-                : settings($defaultSchemeSetting);
-        $cookieScheme = Arr::get($_COOKIE, $schemeCookieName);
-        $selectedScheme =
-            $cookieScheme === 'light' || $cookieScheme === 'dark'
-                ? $cookieScheme
-                : $adminSelectedDefaultScheme;
-
         $defaultLight =
             $themes->where('default_light', true)->first() ?? $themes->first();
         $defaultDark =
@@ -142,8 +132,7 @@ class BaseBootstrapData implements BootstrapData
             'dark' => $defaultDark,
         ];
 
-        $this->initialTheme =
-            $this->cssThemes[$selectedScheme] ?? Arr::first($this->cssThemes);
+        $this->initialTheme = $defaultDark;
     }
 
     public function getThemes(): Collection

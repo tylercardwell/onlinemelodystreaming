@@ -1,9 +1,7 @@
-import { themeEl } from '@ui/root-el';
-import { useSettings } from '@ui/settings/use-settings';
-import { usePreferredColorScheme } from '@ui/themes/use-preferred-color-scheme';
-import { getCurrentThemeValue } from '@ui/themes/utils/get-current-theme-value';
-import { useCookie } from '@ui/utils/hooks/use-cookie';
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import {themeEl} from '@ui/root-el';
+import {getCurrentThemeValue} from '@ui/themes/utils/get-current-theme-value';
+import {useCookie} from '@ui/utils/hooks/use-cookie';
+import {createContext, useCallback, useEffect, useMemo} from 'react';
 
 type ColorScheme = 'dark' | 'light' | 'system';
 
@@ -21,58 +19,26 @@ export function ColorSchemeProvider({
   children: any;
   cookieName?: string;
 }) {
-  // The login flow can refresh bootstrap data while the provider is mounted.
-  // Use the system preference until a complete settings payload is available.
-  const {themes} = useSettings() ?? {};
-  const [appliedScheme, setAppliedScheme] = useState<
-    Omit<ColorScheme, 'system'>
-  >(() =>
-    document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-  );
-  const adminSelectedDefaultScheme: ColorScheme =
-    themes?.default_scheme ?? 'system';
-  const userPreferredColorScheme = usePreferredColorScheme();
-  const defaultScheme: Omit<ColorScheme, 'system'> =
-    adminSelectedDefaultScheme === 'system'
-      ? userPreferredColorScheme
-      : adminSelectedDefaultScheme;
-  const [schemeCookie, setCurrentSchemeCookie] = useCookie(
-    cookieName ?? 'be-color-scheme',
-  );
-  const selectedScheme =
-    schemeCookie === 'light' || schemeCookie === 'dark'
-      ? schemeCookie
-      : defaultScheme;
+  const [, setCurrentSchemeCookie] = useCookie(cookieName ?? 'be-color-scheme');
 
   const setColorScheme = useCallback(
-    (scheme: ColorScheme) => {
-      setCurrentSchemeCookie(scheme);
-      const colorScheme =
-        scheme === 'light' || scheme === 'dark'
-          ? scheme
-          : userPreferredColorScheme;
-      setAppliedScheme(colorScheme);
-      applyColorSchemeToDom(colorScheme);
+    (_scheme: ColorScheme) => {
+      setCurrentSchemeCookie('dark');
+      applyColorSchemeToDom('dark');
     },
-    [setCurrentSchemeCookie, userPreferredColorScheme],
+    [setCurrentSchemeCookie],
   );
 
-  // if selected theme is different then the one that was set
-  // with server render, set new css variables, this will only
-  // happen if user has not selected theme manually and default theme is set to "system"
   useEffect(() => {
-    if (appliedScheme !== selectedScheme) {
-      setAppliedScheme(selectedScheme);
-      applyColorSchemeToDom(selectedScheme);
-    }
-  }, [selectedScheme, appliedScheme]);
+    setColorScheme('dark');
+  }, [setColorScheme]);
 
   const contextValue: ColorSchemeContextValue = useMemo(() => {
     return {
-      colorScheme: appliedScheme,
+      colorScheme: 'dark',
       setColorScheme,
     };
-  }, [appliedScheme, setColorScheme]);
+  }, [setColorScheme]);
 
   return (
     <ColorSchemeContext.Provider value={contextValue}>
@@ -92,6 +58,9 @@ export function applyColorSchemeToDom(scheme: Omit<ColorScheme, 'system'>) {
 
   const themeColorMetaEl = document.querySelector('meta[name="theme-color"]');
   if (themeColorMetaEl) {
-    themeColorMetaEl.setAttribute('content', getCurrentThemeValue('--be-background'));
+    themeColorMetaEl.setAttribute(
+      'content',
+      getCurrentThemeValue('--be-background'),
+    );
   }
 }

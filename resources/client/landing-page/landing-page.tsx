@@ -164,7 +164,7 @@ function ChannelSection({config}: ChannelSectionProps) {
       <ChannelSectionHeader config={config} />
       <div className="relative mt-16 sm:mt-20 lg:mt-24">
         <div className="compact-scrollbar overflow-x-auto">
-          <div className="grid min-w-266.5 grid-cols-5 grid-rows-2 gap-6">
+          <div className="grid min-w-266.5 grid-cols-5 grid-rows-2 gap-6 py-2">
             {channel.content?.data.map(item => (
               <GridItem key={item.id} item={item} />
             ))}
@@ -221,17 +221,32 @@ function RollingChannelSection({config}: ChannelSectionProps) {
             className="rolling-channel-track flex w-max"
             style={animationStyle}
           >
-            <div ref={groupRef} className="flex shrink-0 gap-6 pr-6">
+            <div ref={groupRef} className="flex shrink-0 gap-6 py-2 pr-6">
               {items.map(item => (
-                <div key={item.id} className="w-42 shrink-0 sm:w-48 lg:w-52">
+                <div
+                  key={item.id}
+                  className="group/rolling-card w-42 shrink-0 sm:w-48 lg:w-52"
+                >
                   <GridItem item={item} />
                 </div>
               ))}
             </div>
-            <div className="flex shrink-0 gap-6 pr-6" aria-hidden="true" inert>
+            <div className="flex shrink-0 gap-6 py-2 pr-6" aria-hidden="true">
               {items.map(item => (
-                <div key={item.id} className="w-42 shrink-0 sm:w-48 lg:w-52">
-                  <GridItem item={item} />
+                <div
+                  key={item.id}
+                  className="group/rolling-card w-42 shrink-0 sm:w-48 lg:w-52"
+                >
+                  <div className="relative">
+                    <div inert>
+                      <GridItem item={item} />
+                    </div>
+                    <Link
+                      to={getGridItemLink(item)}
+                      tabIndex={-1}
+                      className="absolute inset-0 z-20 cursor-pointer"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -264,6 +279,23 @@ function ChannelSectionHeader({config}: ChannelSectionProps) {
       ) : null}
     </div>
   );
+}
+
+function getGridItemLink(item: ChannelContentModel): string {
+  switch (item.model_type) {
+    case ARTIST_MODEL:
+      return getArtistLink(item);
+    case ALBUM_MODEL:
+      return getAlbumLink(item);
+    case TRACK_MODEL:
+      return getTrackLink(item);
+    case PLAYLIST_MODEL:
+      return getPlaylistLink(item);
+    case USER_MODEL:
+      return getUserProfileLink(item);
+    default:
+      return '/';
+  }
 }
 
 function GridItem({item}: {item: ChannelContentModel}) {
@@ -352,7 +384,7 @@ function GridItemLayout({
   link,
 }: GridItemLayoutProps) {
   return (
-    <div className="snap-start snap-normal">
+    <div className="relative z-0 snap-start snap-normal transition-transform duration-200 ease-out group-focus-within/rolling-card:z-10 group-focus-within/rolling-card:scale-[1.025] group-hover/rolling-card:z-10 group-hover/rolling-card:scale-[1.025] focus-within:z-10 focus-within:scale-[1.025] hover:z-10 hover:scale-[1.025] motion-reduce:transform-none motion-reduce:transition-none">
       <div className="group relative isolate w-full">
         <Link className="block aspect-square w-full cursor-pointer" to={link}>
           {cloneElement(image, {

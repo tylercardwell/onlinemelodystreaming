@@ -18,8 +18,6 @@ import {Dialog} from '@shadcn/dialog/dialog';
 import {Field} from '@shadcn/forms/field';
 import {HookForm} from '@shadcn/forms/form/hook-form';
 import {Select} from '@shadcn/forms/select/select';
-import {Switch} from '@shadcn/forms/switch/switch';
-import {Separator} from '@shadcn/separator';
 import {getBootstrapData} from '@ui/bootstrap-data/bootstrap-data-store';
 import {BrowserSafeFonts} from '@ui/fonts/font-picker/browser-safe-fonts';
 import {Trans} from '@ui/i18n/trans';
@@ -28,12 +26,6 @@ import {cn} from '@ui/utils/cn';
 import {ChevronDownIcon} from 'lucide-react';
 import {use, useState} from 'react';
 import {useForm, useFormContext, useWatch} from 'react-hook-form';
-
-const defaultSchemeOptions = [
-  {value: 'system', label: <Trans message="System" />},
-  {value: 'light', label: <Trans message="Light" />},
-  {value: 'dark', label: <Trans message="Dark" />},
-] as const;
 
 export function Component() {
   const {data} = useAdminSettings();
@@ -44,8 +36,8 @@ export function Component() {
       themes: siteThemes,
       client: {
         themes: {
-          default_scheme: data.client.themes?.default_scheme ?? 'system',
-          user_change: data.client.themes?.user_change ?? false,
+          default_scheme: 'dark',
+          user_change: false,
         },
       },
     },
@@ -60,34 +52,6 @@ export function Component() {
       <SettingsWithPreview.Content>
         <SettingsWithPreview.Form form={form}>
           <div className="flex flex-col gap-5">
-            <HookForm.Field name="client.themes.default_scheme">
-              <Field.Label>
-                <Trans message="Default color scheme" />
-              </Field.Label>
-              <Select.Root items={defaultSchemeOptions}>
-                <Select.Trigger>
-                  <Select.Value />
-                </Select.Trigger>
-                <Select.Content>
-                  {defaultSchemeOptions.map(option => (
-                    <Select.Item key={option.value} value={option.value}>
-                      {option.label}
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Root>
-              <Field.Error />
-            </HookForm.Field>
-
-            <HookForm.Field name="client.themes.user_change">
-              <Field.Label>
-                <Switch />
-                <Trans message="Allow users to switch color scheme" />
-              </Field.Label>
-            </HookForm.Field>
-
-            <Separator />
-
             <ThemeEditor />
           </div>
         </SettingsWithPreview.Form>
@@ -306,7 +270,7 @@ function ThemeRoundnessSelect({
       >
         <Select.Trigger
           className={cn(
-            'w-full rounded-button font-medium',
+            'rounded-button w-full font-medium',
             size === 'lg' ? 'h-10' : 'h-9',
           )}
         >

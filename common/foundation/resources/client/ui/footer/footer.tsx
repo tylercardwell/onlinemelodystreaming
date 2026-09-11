@@ -1,4 +1,3 @@
-import {ColorSchemeContext} from '@common/core/color-scheme-provider';
 import {LocaleSwitcher} from '@common/locale-switcher/locale-switcher';
 import {useCustomMenu} from '@common/menus/use-custom-menu';
 import {
@@ -7,12 +6,9 @@ import {
   SiX,
   SiYoutube,
 } from '@icons-pack/react-simple-icons';
-import {Button} from '@shadcn/button/button';
 import {Trans} from '@ui/i18n/trans';
 import {useSettings} from '@ui/settings/use-settings';
 import clsx from 'clsx';
-import {MoonIcon, SunIcon} from 'lucide-react';
-import {use} from 'react';
 import {UnstyledCustomMenuItem} from '../../menus/custom-menu';
 
 interface Props {
@@ -32,13 +28,12 @@ export function Footer({className, padding}: Props) {
       )}
     >
       <Menus />
-      <div className="items-center justify-between gap-7.5 text-center text-muted-foreground md:flex md:text-left">
+      <div className="text-muted-foreground items-center justify-between gap-7.5 text-center md:flex md:text-left">
         <Trans
           message="Copyright © :year :name, All Rights Reserved"
           values={{year, name: branding.site_name}}
         />
         <div>
-          <ThemeSwitcher />
           <LocaleSwitcher />
         </div>
       </div>
@@ -55,7 +50,7 @@ function Menus() {
   return (
     <div className="mb-3.5 items-center justify-between gap-7.5 overflow-x-auto border-b pb-3.5 md:flex">
       {primaryMenu && (
-        <div className="flex items-center gap-3 text-primary">
+        <div className="text-primary flex items-center gap-3">
           {primaryMenu.items.map(item => (
             <UnstyledCustomMenuItem
               key={item.id}
@@ -66,7 +61,7 @@ function Menus() {
         </div>
       )}
       {secondaryMenu && (
-        <div className="flex items-center gap-5 text-muted-foreground [&_svg:not([class*='size-'])]:size-4">
+        <div className="text-muted-foreground flex items-center gap-5 [&_svg:not([class*='size-'])]:size-4">
           {secondaryMenu.items.map(item => {
             const icon =
               typeof item.icon === 'string' ? (
@@ -95,31 +90,4 @@ function SocialIcon({icon}: {icon: string}) {
     default:
       return null;
   }
-}
-
-function ThemeSwitcher() {
-  const {themes} = useSettings();
-  const {colorScheme, setColorScheme} = use(ColorSchemeContext);
-  if (!themes?.user_change) return null;
-
-  return (
-    <Button
-      variant="ghost"
-      onClick={() => {
-        setColorScheme(colorScheme === 'light' ? 'dark' : 'light');
-      }}
-    >
-      {colorScheme === 'dark' ? (
-        <>
-          <SunIcon />
-          <Trans message="Light mode" />
-        </>
-      ) : (
-        <>
-          <MoonIcon />
-          <Trans message="Dark mode" />
-        </>
-      )}
-    </Button>
-  );
 }
