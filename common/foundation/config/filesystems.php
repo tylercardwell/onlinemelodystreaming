@@ -41,7 +41,7 @@ return [
             'defaults' => [
                 'prefix' => 'branding-images',
                 'accept' => ['image'],
-                'max_file_size' => '3145728',
+                'max_file_size' => '12582912',
             ],
         ],
         'articleImages' => [

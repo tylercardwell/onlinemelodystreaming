@@ -54,7 +54,16 @@ import {
   UploadIcon,
   UserRoundIcon,
 } from 'lucide-react';
-import {cloneElement, ComponentType, ReactElement, ReactNode} from 'react';
+import {
+  cloneElement,
+  ComponentType,
+  CSSProperties,
+  ReactElement,
+  ReactNode,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import {Link, useNavigate} from 'react-router';
 
 const defaultIcons: Record<string, ReactElement> = {
@@ -83,6 +92,7 @@ const sectionRenderers: Record<
   ComponentType<{config: any; index: number}>
 > = {
   channel: ChannelSection,
+  'rolling-channel': RollingChannelSection,
   'kinetic-gallery': KineticGallerySection,
 };
 
@@ -136,6 +146,7 @@ type ChannelSectionProps = {
     badge?: string;
     title?: string;
     description?: string;
+    speed?: number | string;
   };
 };
 function ChannelSection({config}: ChannelSectionProps) {
@@ -150,23 +161,7 @@ function ChannelSection({config}: ChannelSectionProps) {
 
   return (
     <div className="@container mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
-      <div className="mx-auto max-w-2xl lg:text-center">
-        {config.badge ? (
-          <p className="text-primary text-base/7 font-semibold">
-            <Trans message={config.badge} />
-          </p>
-        ) : null}
-        {config.title ? (
-          <h2 className="text-foreground mt-2 text-4xl font-semibold tracking-tight text-pretty sm:text-5xl lg:text-balance">
-            <Trans message={config.title} />
-          </h2>
-        ) : null}
-        {config.description ? (
-          <p className="text-muted-foreground mt-6 text-lg/8">
-            <Trans message={config.description} />
-          </p>
-        ) : null}
-      </div>
+      <ChannelSectionHeader config={config} />
       <div className="relative mt-16 sm:mt-20 lg:mt-24">
         <div className="compact-scrollbar overflow-x-auto">
           <div className="grid min-w-266.5 grid-cols-5 grid-rows-2 gap-6">
@@ -177,6 +172,96 @@ function ChannelSection({config}: ChannelSectionProps) {
         </div>
         <div className="from-bg pointer-events-none absolute top-0 right-0 h-full w-17 bg-linear-to-l to-transparent xl:hidden" />
       </div>
+    </div>
+  );
+}
+
+function RollingChannelSection({config}: ChannelSectionProps) {
+  const query = useSuspenseQuery(appQueries.landingPageData.get());
+  const channel = query.data.channels?.find(
+    c => c.id == config.channelId,
+  ) as Channel<ChannelContentModel>;
+  const groupRef = useRef<HTMLDivElement>(null);
+  const [groupWidth, setGroupWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    const group = groupRef.current;
+    if (!group) return;
+
+    const updateWidth = () =>
+      setGroupWidth(group.getBoundingClientRect().width);
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(group);
+    return () => observer.disconnect();
+  }, [channel]);
+
+  if (!channel) {
+    return null;
+  }
+
+  const items = channel.content?.data ?? [];
+  const parsedSpeed = Number(config.speed);
+  const speed = Number.isFinite(parsedSpeed)
+    ? Math.min(200, Math.max(10, parsedSpeed))
+    : 35;
+  const duration = groupWidth ? groupWidth / speed : 30;
+  const animationStyle = {
+    '--rolling-channel-duration': `${duration}s`,
+  } as CSSProperties;
+
+  return (
+    <div className="@container py-24 sm:py-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <ChannelSectionHeader config={config} />
+      </div>
+      {items.length ? (
+        <div className="rolling-channel relative mt-16 overflow-hidden sm:mt-20 lg:mt-24">
+          <div
+            className="rolling-channel-track flex w-max"
+            style={animationStyle}
+          >
+            <div ref={groupRef} className="flex shrink-0 gap-6 pr-6">
+              {items.map(item => (
+                <div key={item.id} className="w-42 shrink-0 sm:w-48 lg:w-52">
+                  <GridItem item={item} />
+                </div>
+              ))}
+            </div>
+            <div className="flex shrink-0 gap-6 pr-6" aria-hidden="true" inert>
+              {items.map(item => (
+                <div key={item.id} className="w-42 shrink-0 sm:w-48 lg:w-52">
+                  <GridItem item={item} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="from-bg pointer-events-none absolute inset-y-0 left-0 w-12 bg-linear-to-r to-transparent sm:w-20" />
+          <div className="from-bg pointer-events-none absolute inset-y-0 right-0 w-12 bg-linear-to-l to-transparent sm:w-20" />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function ChannelSectionHeader({config}: ChannelSectionProps) {
+  return (
+    <div className="mx-auto max-w-2xl lg:text-center">
+      {config.badge ? (
+        <p className="text-primary text-base/7 font-semibold">
+          <Trans message={config.badge} />
+        </p>
+      ) : null}
+      {config.title ? (
+        <h2 className="text-foreground mt-2 text-4xl font-semibold tracking-tight text-pretty sm:text-5xl lg:text-balance">
+          <Trans message={config.title} />
+        </h2>
+      ) : null}
+      {config.description ? (
+        <p className="text-muted-foreground mt-6 text-lg/8">
+          <Trans message={config.description} />
+        </p>
+      ) : null}
     </div>
   );
 }

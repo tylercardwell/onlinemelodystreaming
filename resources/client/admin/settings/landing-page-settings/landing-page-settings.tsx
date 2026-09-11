@@ -1,4 +1,7 @@
-import {ChannelSectionSettings} from '@app/admin/settings/landing-page-settings/channel-section-settings';
+import {
+  ChannelSectionSettings,
+  RollingChannelSectionSettings,
+} from '@app/admin/settings/landing-page-settings/channel-section-settings';
 import {KineticGallerySettings} from '@app/admin/settings/landing-page-settings/kinetic-gallery-settings';
 import {Component as CommonLandingPageSettings} from '@common/admin/settings/landing-page-settings/landing-page-settings';
 import {
@@ -13,6 +16,10 @@ const contextValue: LandingPageSettingsContextValue = {
     channel: {
       label: <Trans message="Channel" />,
       component: ChannelSectionSettings,
+    },
+    'rolling-channel': {
+      label: <Trans message="Rolling channel" />,
+      component: RollingChannelSectionSettings,
     },
     'kinetic-gallery': {
       label: <Trans message="Kinetic gallery" />,

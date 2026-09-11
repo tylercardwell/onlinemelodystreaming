@@ -12,6 +12,17 @@ type Props = {
   index: number;
 };
 export function ChannelSectionSettings({index}: Props) {
+  return <ChannelSectionFields index={index} />;
+}
+
+export function RollingChannelSectionSettings({index}: Props) {
+  return <ChannelSectionFields index={index} showSpeed />;
+}
+
+function ChannelSectionFields({
+  index,
+  showSpeed = false,
+}: Props & {showSpeed?: boolean}) {
   const prefix =
     `client.landingPage.sections.${index}` as `client.landingPage.sections.${number}`;
   const query = useQuery(channelQueries.index());
@@ -76,6 +87,19 @@ export function ChannelSectionSettings({index}: Props) {
         </Field.Description>
         <Field.Error />
       </HookForm.Field>
+
+      {showSpeed ? (
+        <HookForm.Field name={`${prefix}.speed`}>
+          <Field.Label>
+            <Trans message="Scroll speed" />
+          </Field.Label>
+          <Input type="number" min={10} max={200} placeholder="35" />
+          <Field.Description>
+            <Trans message="Horizontal movement in pixels per second. Higher values move faster." />
+          </Field.Description>
+          <Field.Error />
+        </HookForm.Field>
+      ) : null}
     </Field.Group>
   );
 }

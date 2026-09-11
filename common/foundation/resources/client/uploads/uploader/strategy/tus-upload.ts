@@ -1,4 +1,5 @@
 import {storeTusFileEntry} from '@app/gen/files';
+import axios from 'axios';
 import {parseApiError} from '@common/http/errors/parsed-api-error';
 import {UploadedFile} from '@ui/utils/files/uploaded-file';
 import {getCookie} from '@ui/utils/hooks/use-cookie';
@@ -32,6 +33,11 @@ export class TusUpload implements UploadStrategy {
       baseUrl,
     }: UploadStrategyConfigWithBackend,
   ): Promise<TusUpload> {
+    // TUS sends its requests outside our Axios API client, so it does not get
+    // the normal 419/CSRF retry. Refresh first to prevent large uploads from
+    // failing after the server or session has restarted.
+    await axios.get('csrf-token', {withCredentials: true});
+
     const tusFingerprint = ['tus', file.fingerprint, 'drive'].join('-');
     const upload = new Upload(file.native, {
       fingerprint: () => Promise.resolve(tusFingerprint),

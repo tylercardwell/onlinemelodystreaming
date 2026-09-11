@@ -50,14 +50,14 @@ export function KineticGallerySection({config}: {config: KineticGalleryConfig}) 
 
   return (
     <section className="bg-background px-0 py-0 text-white sm:px-3 sm:py-8">
-      <Navbar.Root className="relative z-10 mx-auto max-w-[1440px] border-b border-white/10 bg-black text-white dark:bg-black sm:rounded-t-3xl">
+      <Navbar.Root className="relative z-10 mx-auto max-w-[1440px] border-b border-white/10 bg-black text-white dark:bg-black">
         <Navbar.Logo color="light" url="/" />
         <Navbar.Menu position="landing-page-navbar" />
         <Navbar.Content className="ml-auto">
           <Navbar.AuthContent />
         </Navbar.Content>
       </Navbar.Root>
-      <div className="relative isolate mx-auto min-h-150 max-w-[1440px] overflow-hidden bg-card sm:min-h-175 sm:rounded-3xl">
+      <div className="relative isolate mx-auto min-h-150 max-w-[1440px] overflow-hidden bg-card sm:min-h-175">
         {slides.map((slide, index) => (
           <img
             key={slide.image!.src}

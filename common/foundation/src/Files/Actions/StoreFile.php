@@ -51,9 +51,9 @@ class StoreFile
         }
 
         if (isset($fileOptions['file'])) {
-            return $this->storeUploadedFile($fileOptions['file']);
+            $stored = $this->storeUploadedFile($fileOptions['file']);
         } elseif (isset($fileOptions['contents'])) {
-            return $this->storeStringContents($fileOptions['contents']);
+            $stored = $this->storeStringContents($fileOptions['contents']);
         } elseif (isset($fileOptions['path'])) {
             // if source and destination is local (and not temp dir) move file
             // instead of copying or using streams, this will be a lot faster
@@ -61,13 +61,22 @@ class StoreFile
                 Arr::get($fileOptions, 'moveFile') === true &&
                 $this->disk->getAdapter() instanceof LocalFilesystemAdapter
             ) {
-                return $this->storeLocalFile($fileOptions['path']);
+                $stored = $this->storeLocalFile($fileOptions['path']);
             } else {
-                return $this->storeUploadedFile(new File($fileOptions['path']));
+                $stored = $this->storeUploadedFile(
+                    new File($fileOptions['path']),
+                );
             }
+        } else {
+            $stored = false;
         }
 
-        return false;
+        throw_if(
+            $stored === false,
+            new \RuntimeException('The uploaded file could not be stored.'),
+        );
+
+        return $stored;
     }
 
     protected function storeUploadedFile(File|UploadedFile $file): string|false

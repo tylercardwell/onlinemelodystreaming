@@ -6,6 +6,42 @@
 @source '../../**/*.ts*';
 
 @layer base {
+  .rolling-channel-track {
+    animation: rolling-channel var(--rolling-channel-duration, 30s) linear
+      infinite;
+    will-change: transform;
+  }
+
+  .rolling-channel:hover .rolling-channel-track,
+  .rolling-channel:focus-within .rolling-channel-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes rolling-channel {
+    from {
+      transform: translate3d(-50%, 0, 0);
+    }
+
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rolling-channel {
+      overflow-x: auto;
+    }
+
+    .rolling-channel-track {
+      animation: none;
+      will-change: auto;
+    }
+
+    .rolling-channel-track > :last-child {
+      display: none;
+    }
+  }
+
   .button-with-progress {
     position: relative;
 
