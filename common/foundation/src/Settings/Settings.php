@@ -227,7 +227,11 @@ class Settings
             return;
         }
 
-        $value = Cache::get('settings.public');
+        // Local development can point at a shared remote database. Do not keep
+        // a separate, day-long file-cache of its settings or local preview
+        // will diverge from changes saved in the deployed application.
+        $shouldUseCache = !app()->environment('local');
+        $value = $shouldUseCache ? Cache::get('settings.public') : null;
 
         if ($value && count($value) > 0) {
             $this->all = $value;
@@ -238,7 +242,9 @@ class Settings
                     ->pluck('value', 'name');
                 if (!$value->isEmpty()) {
                     $this->all = $value;
+                if ($shouldUseCache) {
                     Cache::set('settings.public', $value, now()->addDay());
+                }
                 }
             } catch (Exception $e) {
             }

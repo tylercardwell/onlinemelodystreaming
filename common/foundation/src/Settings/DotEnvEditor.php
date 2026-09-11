@@ -50,7 +50,17 @@ class DotEnvEditor
 
     public function write(array|Collection $values = []): void
     {
-        $content = file_get_contents(base_path($this->fileName));
+        $path = base_path($this->fileName);
+
+        // Platforms such as Railway provide environment variables at runtime
+        // and intentionally do not expose a writable .env file. Database
+        // settings (including upload backends) can still be saved normally;
+        // only server variables must be changed in the platform dashboard.
+        if (!is_file($path) || !is_writable($path)) {
+            return;
+        }
+
+        $content = file_get_contents($path);
 
         foreach ($values as $key => $value) {
             $value = $this->formatValue($value);
@@ -82,7 +92,7 @@ class DotEnvEditor
         // collapse multiple empty lines into one
         $content = preg_replace("/\n{3,}/", "\n", $content);
 
-        file_put_contents(base_path($this->fileName), $content);
+        file_put_contents($path, $content);
     }
 
     /**
