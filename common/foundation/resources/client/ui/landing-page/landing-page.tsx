@@ -16,7 +16,15 @@ import {useSettings} from '@ui/settings/use-settings';
 import {ReactNode, use} from 'react';
 import {Fragment} from 'react/jsx-runtime';
 
-export function LandingPage({children}: {children?: ReactNode}) {
+export function LandingPage({
+  children,
+  skipHeroSections = false,
+  skipSectionNames = [],
+}: {
+  children?: ReactNode;
+  skipHeroSections?: boolean;
+  skipSectionNames?: string[];
+}) {
   const isPreview = useSettingsPreviewMode().isInsideSettingsPreview;
   const {landingPage} = useSettings();
   const {sections: contextSections, adSlotAfterHero} = use(LandingPageContext);
@@ -26,15 +34,20 @@ export function LandingPage({children}: {children?: ReactNode}) {
   const sections =
     isPreview && landingPage?.sections ? landingPage.sections : contextSections;
 
+  const visibleSections = sections.filter(section => {
+    if (skipSectionNames.includes(section.name)) return false;
+    return !skipHeroSections || !section.name.startsWith('hero-');
+  });
+
   const heroAdSlotIndex = adSlotAfterHero
-    ? sections.findIndex(s => s.name.startsWith('hero-'))
+    ? visibleSections.findIndex(s => s.name.startsWith('hero-'))
     : null;
 
   return (
     <div>
       <DefaultMetaTags />
       {children}
-      {sections.map((section, index) => (
+      {visibleSections.map((section, index) => (
         <Fragment key={index}>
           <Section config={section} index={index} />
           {heroAdSlotIndex === index && adSlotAfterHero && (

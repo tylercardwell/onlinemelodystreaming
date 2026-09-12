@@ -19,6 +19,14 @@ import {getTrackLink, TrackLink} from '@app/web-player/tracks/track-link';
 import {UserImage} from '@app/web-player/users/user-image';
 import {KineticGallerySection} from '@app/landing-page/kinetic-gallery-section';
 import {
+  CatalogCtaSection,
+  CatalogGridSection,
+  CatalogRailSection,
+  DiscoveryBenefitsSection,
+  DiscoveryHeroSection,
+  EditorialDiscoverySection,
+} from '@app/landing-page/music-discovery-sections';
+import {
   getUserProfileLink,
   UserProfileLink,
 } from '@app/web-player/users/user-profile-link';
@@ -94,6 +102,12 @@ const sectionRenderers: Record<
   channel: ChannelSection,
   'rolling-channel': RollingChannelSection,
   'kinetic-gallery': KineticGallerySection,
+  'discovery-hero': DiscoveryHeroSection,
+  'editorial-discovery': EditorialDiscoverySection,
+  'discovery-benefits': DiscoveryBenefitsSection,
+  'catalog-cta': CatalogCtaSection,
+  'catalog-rail': CatalogRailSection,
+  'catalog-grid': CatalogGridSection,
 };
 
 type HeroSearchBarProps = {
