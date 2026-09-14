@@ -94,10 +94,15 @@ type PlayerContentProps = {
 function PlayerContent({overlayRef}: PlayerContentProps) {
   const isMaximized = usePlayerOverlayStore(s => s.isMaximized);
   const isFullscreen = usePlayerStore(s => s.isFullscreen);
+  const providerName = usePlayerStore(s => s.providerName);
   const playerClickHandler = usePlayerClickHandler();
   const haveVideo = usePlayerStore(
-    s => s.providerApi != null && s.providerName !== 'htmlAudio',
+    s =>
+      s.providerApi != null &&
+      s.providerName !== 'htmlAudio' &&
+      s.providerName !== 'youtube',
   );
+  const hideYoutubeVideo = providerName === 'youtube';
   const cuedTrack = useCuedTrack();
   return (
     <div className="h-full w-full">
@@ -138,7 +143,11 @@ function PlayerContent({overlayRef}: PlayerContentProps) {
           />
           <div
             className={
-              haveVideo ? 'h-full w-full flex-auto bg-black' : undefined
+              hideYoutubeVideo
+                ? 'pointer-events-none absolute inset-0 opacity-0'
+                : haveVideo
+                  ? 'h-full w-full flex-auto bg-black'
+                  : undefined
             }
           >
             <PlayerOutlet className="h-full w-full" />

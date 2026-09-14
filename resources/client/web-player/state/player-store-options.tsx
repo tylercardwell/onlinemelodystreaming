@@ -18,11 +18,13 @@ import {Trans} from '@ui/i18n/trans';
 // used to track play history for logging plays on backend (prevents logging play twice, unless track is fully played)
 const trackPlays = new Set<number>();
 
-// guests can only preview this many seconds of a track before playback is paused
-const GUEST_PREVIEW_SECONDS = 30;
-// tracks which track IDs already showed the guest preview limit toast, so it
-// doesn't re-appear on every progress tick while playback is paused at the limit
-const guestPreviewLimitShown = new Set<number>();
+const PREVIEW_DURATION_SECONDS = 30;
+// Start just before the media ends so the player cannot advance the queue
+// before the preview message is displayed.
+const PREVIEW_LIMIT_TRIGGER_SECONDS = PREVIEW_DURATION_SECONDS - 0.5;
+// Tracks which have already shown the preview limit toast. This prevents it
+// from reappearing on every progress event after the player is paused.
+const previewLimitShown = new Set<number>();
 
 // this is needed in order to stop YouTube embed from trying to
 // cue a video that will error out while valid video is already playing
@@ -137,26 +139,39 @@ export const playerStoreOptions: Partial<PlayerStoreOptions> = {
       // clear track play
       if (cuedMedia) {
         trackPlays.delete(cuedMedia.meta.id);
-        guestPreviewLimitShown.delete(cuedMedia.meta.id);
+        previewLimitShown.delete(cuedMedia.meta.id);
       }
     },
-    progress: ({currentTime, state: {cuedMedia, pause}}) => {
-      if (!cuedMedia || getBootstrapData().user) return;
-      if (currentTime < GUEST_PREVIEW_SECONDS) return;
+    progress: ({currentTime, state: {cuedMedia, mediaDuration, pause}}) => {
+      // Only limit media that is itself a 30-second preview. Uploaded and
+      // otherwise full-length tracks must continue playing for signed-in users.
+      if (
+        !cuedMedia ||
+        mediaDuration <= 0 ||
+        mediaDuration > PREVIEW_DURATION_SECONDS + 0.5 ||
+        currentTime < PREVIEW_LIMIT_TRIGGER_SECONDS
+      ) {
+        return;
+      }
 
       pause();
 
-      if (!guestPreviewLimitShown.has(cuedMedia.meta.id)) {
-        guestPreviewLimitShown.add(cuedMedia.meta.id);
+      if (!previewLimitShown.has(cuedMedia.meta.id)) {
+        previewLimitShown.add(cuedMedia.meta.id);
+        const user = getBootstrapData().user;
         toast(
-          <Trans message="You've reached the end of the preview. Sign up to keep listening." />,
+          <Trans message="You've reached the end of this 30-second preview." />,
           {
-            actionProps: {
-              children: <Trans message="Sign up" />,
-              onClick: () => {
-                window.location.href = '/register';
-              },
-            },
+            ...(user
+              ? {}
+              : {
+                  actionProps: {
+                    children: <Trans message="Sign up" />,
+                    onClick: () => {
+                      window.location.href = '/register';
+                    },
+                  },
+                }),
           },
         );
       }
