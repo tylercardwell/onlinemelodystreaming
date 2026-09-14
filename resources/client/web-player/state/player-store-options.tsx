@@ -194,6 +194,10 @@ export const playerStoreOptions: Partial<PlayerStoreOptions> = {
           // we can assume there's an issue with YouTube API and bail
           if (tracksSkippedDueToError <= 2) {
             emit('playbackEnd');
+          } else {
+            toast.error(
+              <Trans message="This track could not be played from YouTube. Please try another track." />,
+            );
           }
         }
       } else {

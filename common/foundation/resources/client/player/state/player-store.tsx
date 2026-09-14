@@ -332,10 +332,18 @@ export const createPlayerStore = (
                   unsubscribe();
                   resolve();
                 },
-                error: e => {
+                error: () => {
                   clearTimeout(timeoutId);
                   unsubscribe();
-                  reject('Could not cue media');
+                  // YouTube errors are recovered by the application's player
+                  // listener, which tries the next matching video. Rejecting
+                  // here interrupts that recovery and leaves an unhandled
+                  // "Could not cue media" promise at the play button.
+                  if (get().providerName === 'youtube') {
+                    resolve();
+                  } else {
+                    reject('Could not cue media');
+                  }
                 },
               });
 
