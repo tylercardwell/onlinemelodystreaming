@@ -149,7 +149,9 @@ export function Component() {
         heroSearchBarSlot: HeroSearchBar,
       }}
     >
-      <CommonLandingPage />
+      <div className="melody-landing">
+        <CommonLandingPage />
+      </div>
     </LandingPageContext.Provider>
   );
 }

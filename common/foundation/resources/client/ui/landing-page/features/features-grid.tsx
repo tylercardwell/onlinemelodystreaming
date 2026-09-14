@@ -26,56 +26,56 @@ export default function FeaturesGrid({config}: FeaturesGridProps) {
     <div
       className={cn(
         'py-24 sm:py-32',
-        config.mutedBg && 'bg-muted/40 dark:bg-card',
+        config.mutedBg && 'bg-muted/55 dark:bg-card',
       )}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:text-center">
+        <div className="mx-auto max-w-2xl text-center">
           {config.badge ? (
             <p className="text-base/7 font-semibold text-primary">
               <Trans message={config.badge} />
             </p>
           ) : null}
           {config.title ? (
-            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-pretty text-foreground sm:text-5xl lg:text-balance">
+            <h2 className="mt-3 text-4xl font-semibold tracking-[-0.045em] text-pretty text-foreground sm:text-5xl lg:text-6xl lg:leading-[1.05]">
               <Trans message={config.title} />
             </h2>
           ) : null}
           {config.description ? (
-            <p className="mt-6 text-lg/8 text-muted-foreground">
+            <p className="mt-5 text-lg/8 text-muted-foreground">
               <Trans message={config.description} />
             </p>
           ) : null}
         </div>
         <div
           className={cn(
-            'mx-auto mt-16 sm:mt-20 lg:mt-24',
+            'mx-auto mt-14 sm:mt-18 lg:mt-20',
             `${config.maxColumns}` === '2' && 'max-w-2xl lg:max-w-4xl',
           )}
         >
           <dl
             className={cn(
-              'mx-auto grid max-w-xl grid-cols-1 sm:grid-cols-2 lg:max-w-none',
+              'mx-auto grid max-w-xl grid-cols-1 gap-4 sm:max-w-none sm:grid-cols-2 lg:gap-5',
               getColumnsClassName(config.maxColumns),
-              `${config.maxColumns}` === '3' ? 'gap-17.5' : 'gap-10',
             )}
           >
-            {config.features?.map(feature => (
+            {config.features?.map((feature, index) => (
               <div
                 key={feature.title}
                 className={cn(
-                  'flex gap-x-6 gap-y-3',
-                  config.iconsOnTop && 'flex-col items-center',
+                  'group flex min-h-52 gap-x-6 gap-y-4 rounded-2xl border border-border/70 bg-background/70 p-6 shadow-sm shadow-primary/5 transition duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 sm:p-7',
+                  config.iconsOnTop && 'flex-col items-center text-center',
+                  index === 0 && `${config.maxColumns}` === '3' && 'sm:col-span-2 lg:col-span-3 lg:min-h-48 lg:flex-row lg:items-center lg:text-left',
                 )}
               >
                 {feature.icon ? <ConfigIconWithBg icon={feature.icon} /> : null}
                 <div
                   className={cn(
                     'flex-auto',
-                    config.iconsOnTop && 'text-center',
+                  config.iconsOnTop && 'text-center',
                   )}
                 >
-                  <dt className="text-lg/7 font-semibold text-foreground">
+                  <dt className="text-lg/7 font-semibold tracking-[-0.02em] text-foreground">
                     <Trans message={feature.title} />
                   </dt>
                   <dd className="mt-2 text-base/7 text-muted-foreground">

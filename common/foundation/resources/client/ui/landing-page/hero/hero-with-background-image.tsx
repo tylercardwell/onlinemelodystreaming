@@ -30,12 +30,12 @@ export function HeroWithBackgroundImage({config}: Props) {
   return (
     <div
       className={clsx(
-        'overflow-hidden bg-muted text-foreground',
-        config.showAsPanel && 'm-2 rounded-3xl',
+        'relative overflow-hidden bg-muted text-foreground',
+        config.showAsPanel && 'm-3 rounded-2xl border border-white/10 shadow-2xl shadow-black/15',
         config.forceDarkMode && 'dark',
       )}
     >
-      <Navbar.Root className="absolute inset-x-0 top-0 z-50 m-3 min-h-20 bg-transparent">
+      <Navbar.Root className="absolute inset-x-0 top-0 z-50 mx-4 mt-4 min-h-16 rounded-2xl border border-white/12 bg-background/70 px-3 shadow-lg shadow-black/10 backdrop-blur-xl sm:mx-6 lg:mx-8">
         <Navbar.Logo color={isDarkMode ? 'light' : 'dark'} url="/" />
         <Navbar.Menu position="landing-page-navbar" />
         <Navbar.Content className="ml-auto">
@@ -43,16 +43,17 @@ export function HeroWithBackgroundImage({config}: Props) {
         </Navbar.Content>
       </Navbar.Root>
 
-      <div className="relative isolate overflow-hidden pt-14">
+      <div className="relative isolate min-h-[680px] overflow-hidden pt-18 sm:min-h-[720px]">
         {config.image ? (
           <img
             alt=""
             src={config.image?.src}
             width={config.image?.width}
             height={config.image?.height}
-            className="absolute inset-0 -z-20 size-full object-cover"
+            className="absolute inset-0 -z-20 size-full object-cover opacity-55"
           />
         ) : null}
+        <div className="absolute inset-0 -z-10 bg-linear-to-br from-background/95 via-background/78 to-background/35" />
         {config.bgColors ? <BgColors config={config} /> : null}
         <div
           aria-hidden="true"
@@ -70,7 +71,7 @@ export function HeroWithBackgroundImage({config}: Props) {
           <div
             className={clsx(
               'mx-auto max-w-2xl',
-              SearchBarCmp ? 'py-32 sm:py-36' : 'py-32 sm:py-48 lg:py-56',
+              SearchBarCmp ? 'py-34 sm:py-40' : 'py-36 sm:py-44 lg:py-48',
             )}
           >
             {config.badge ? (
@@ -92,14 +93,14 @@ export function HeroWithBackgroundImage({config}: Props) {
                 </Description>
               ) : null}
               {SearchBarCmp ? (
-                <div className="light mt-10 pb-12.5 text-muted-foreground">
+              <div className="light mt-9 pb-6 text-muted-foreground">
                   <SearchBarCmp background="bg-white" config={config} />
                 </div>
               ) : null}
               {config.buttons?.length ? (
                 <Buttons
                   buttons={config.buttons}
-                  className="mt-10 justify-center gap-x-6"
+                  className="mt-9 justify-center gap-3"
                 />
               ) : null}
             </div>

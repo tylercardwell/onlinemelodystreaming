@@ -59,25 +59,28 @@ class YoutubeAudioSearch
                     $html = Str::after($html, 'ytInitialData=');
                     $html = trim($html, ';');
                     $json = json_decode($html, true);
-                    $contents = Arr::first(
+                    $sections = Arr::first(
                         $json['contents']['twoColumnSearchResultsRenderer'][
                             'primaryContents'
                         ],
-                    )['contents'];
-                    $results = Arr::first($contents, function ($content) {
-                        return !array_key_exists(
-                            'carouselAdRenderer',
-                            Arr::first(Arr::first(Arr::first($content))),
-                        );
-                    });
-                    $results = Arr::first(Arr::first($results));
+                    )['contents'] ?? [];
 
-                    $results = array_filter($results, function ($result) {
-                        return isset($result['videoRenderer']);
-                    });
-                    $results = array_slice($results, 0, 3);
-                    $results = array_map(function ($result) use ($json) {
-                        $result = $result['videoRenderer'];
+                    // sections can also contain non-result entries (e.g. a
+                    // continuationItemRenderer for infinite scroll), so pull
+                    // videoRenderer items out explicitly instead of assuming
+                    // every section has the same shape.
+                    $videoRenderers = [];
+                    foreach ($sections as $section) {
+                        $items = $section['itemSectionRenderer']['contents'] ?? [];
+                        foreach ($items as $item) {
+                            if (isset($item['videoRenderer'])) {
+                                $videoRenderers[] = $item['videoRenderer'];
+                            }
+                        }
+                    }
+
+                    $results = array_slice($videoRenderers, 0, 3);
+                    $results = array_map(function ($result) {
                         return [
                             'title' => $result['title']['runs'][0]['text'],
                             'id' => $result['videoId'],

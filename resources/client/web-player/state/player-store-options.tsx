@@ -18,6 +18,12 @@ import {Trans} from '@ui/i18n/trans';
 // used to track play history for logging plays on backend (prevents logging play twice, unless track is fully played)
 const trackPlays = new Set<number>();
 
+// guests can only preview this many seconds of a track before playback is paused
+const GUEST_PREVIEW_SECONDS = 30;
+// tracks which track IDs already showed the guest preview limit toast, so it
+// doesn't re-appear on every progress tick while playback is paused at the limit
+const guestPreviewLimitShown = new Set<number>();
+
 // this is needed in order to stop YouTube embed from trying to
 // cue a video that will error out while valid video is already playing
 const failedVideoId = ' ';
@@ -131,6 +137,28 @@ export const playerStoreOptions: Partial<PlayerStoreOptions> = {
       // clear track play
       if (cuedMedia) {
         trackPlays.delete(cuedMedia.meta.id);
+        guestPreviewLimitShown.delete(cuedMedia.meta.id);
+      }
+    },
+    progress: ({currentTime, state: {cuedMedia, pause}}) => {
+      if (!cuedMedia || getBootstrapData().user) return;
+      if (currentTime < GUEST_PREVIEW_SECONDS) return;
+
+      pause();
+
+      if (!guestPreviewLimitShown.has(cuedMedia.meta.id)) {
+        guestPreviewLimitShown.add(cuedMedia.meta.id);
+        toast(
+          <Trans message="You've reached the end of the preview. Sign up to keep listening." />,
+          {
+            actionProps: {
+              children: <Trans message="Sign up" />,
+              onClick: () => {
+                window.location.href = '/register';
+              },
+            },
+          },
+        );
       }
     },
     error: async ({

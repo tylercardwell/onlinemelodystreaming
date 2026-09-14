@@ -15,7 +15,7 @@ export function Heading({children, className}: HeadingProps) {
     <h1
       className={cn(
         className,
-        'text-5xl font-semibold tracking-tight text-pretty text-foreground sm:text-7xl',
+        'max-w-3xl text-5xl font-semibold tracking-[-0.055em] text-pretty text-foreground sm:text-6xl lg:text-7xl lg:leading-[1.02]',
       )}
     >
       {children}
@@ -32,7 +32,7 @@ export function Description({children, className}: DescriptionProps) {
     <p
       className={cn(
         className,
-        'text-lg font-medium text-pretty text-muted-foreground sm:text-xl/8',
+        'max-w-xl text-base/7 font-medium text-pretty text-muted-foreground sm:text-lg/8',
       )}
     >
       {children}
@@ -47,7 +47,7 @@ type ButtonsProps = {
 export function Buttons({buttons, className}: ButtonsProps) {
   if (!buttons?.length) return null;
   return (
-    <div className={cn('flex items-center', className)}>
+    <div className={cn('flex flex-wrap items-center', className)}>
       {buttons.map((button, index) => (
         <CtaButton key={index} config={button} />
       ))}
@@ -66,7 +66,7 @@ function CtaButton({config}: CtaButtonProps) {
       to={config.action}
       variant={config.variant}
       color={config.color ?? undefined}
-      className="min-h-10"
+      className="min-h-11 rounded-xl px-5 shadow-sm transition-transform duration-200 active:translate-y-px"
     >
       <Trans message={config.label} />
       {Icon ? <Icon /> : undefined}

@@ -41,7 +41,7 @@ export function LandingPagePricing({config}: Props) {
             <Trans message="Pricing" />
           </h2>
           {config.title ? (
-            <p className="text-foreground mt-2 text-5xl font-semibold tracking-tight text-balance sm:text-6xl">
+          <p className="text-foreground mt-3 text-5xl font-semibold tracking-[-0.05em] text-balance sm:text-6xl sm:leading-[1.05]">
               <Trans message={config.title} />
             </p>
           ) : null}

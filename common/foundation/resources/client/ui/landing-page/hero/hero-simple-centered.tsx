@@ -33,11 +33,11 @@ export function HeroSimpleCentered({config}: Props) {
         'isolate bg-background text-foreground',
         config.forceDarkMode && 'dark',
         config.showAsPanel
-          ? 'm-2 overflow-hidden rounded-3xl border border-border/80 shadow-xs'
+          ? 'm-3 overflow-hidden rounded-2xl border border-border/80 shadow-xl shadow-primary/5'
           : 'overflow-visible',
       )}
     >
-      <Navbar.Root className="absolute inset-x-0 top-0 z-50 m-3 min-h-20 bg-transparent text-foreground">
+      <Navbar.Root className="absolute inset-x-0 top-0 z-50 mx-4 mt-4 min-h-16 rounded-2xl border border-border/70 bg-background/75 px-3 text-foreground shadow-lg shadow-black/5 backdrop-blur-xl sm:mx-6 lg:mx-8">
         <Navbar.Logo color={isDarkMode ? 'light' : 'dark'} url="/" />
         <Navbar.Menu position="landing-page-navbar" />
         <Navbar.Content className="ml-auto">
@@ -62,8 +62,8 @@ export function HeroSimpleCentered({config}: Props) {
         </div>
         <div
           className={cn(
-            'mx-auto max-w-2xl',
-            config.image ? 'pt-32' : 'py-32 sm:py-48 lg:py-56',
+          'mx-auto max-w-2xl',
+            config.image ? 'pt-32' : 'py-32 sm:py-40 lg:py-48',
           )}
         >
           {config.badge ? (
@@ -92,7 +92,7 @@ export function HeroSimpleCentered({config}: Props) {
             {config.buttons?.length ? (
               <Buttons
                 buttons={config.buttons}
-                className="mt-10 justify-center gap-x-6"
+                className="mt-9 justify-center gap-3"
               />
             ) : null}
           </div>

@@ -50,12 +50,6 @@ export const webPlayerRoutes: RouteObject[] = [
       ) {
         return redirect('/login');
       }
-
-      if (homepageType === 'landingPage' && !isLoggedIn) {
-        return await queryClient.ensureQueryData(
-          appQueries.landingPageData.get(),
-        );
-      }
     },
     lazy: () => import('@app/homepage'),
 

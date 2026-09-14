@@ -35,7 +35,7 @@ export function FeatureWithScreenshot({config}: Props) {
   const isLargePanel = config.inPanel && !isSmallPanel;
 
   const panelClassName =
-    'overflow-hidden border border-border/80 bg-muted/40 dark:bg-card py-20 sm:rounded-3xl sm:py-24 lg:py-24 isolate';
+    'isolate overflow-hidden border border-border/70 bg-muted/50 py-20 shadow-xl shadow-primary/5 sm:rounded-2xl sm:py-24 dark:bg-card lg:py-24';
 
   return (
     <div
@@ -66,25 +66,25 @@ export function FeatureWithScreenshot({config}: Props) {
               >
                 <div className="lg:max-w-lg">
                   {config.badge ? (
-                    <h2 className="text-base/7 font-semibold text-primary">
+                    <h2 className="text-sm/6 font-semibold text-primary">
                       <Trans message={config.badge} />
                     </h2>
                   ) : null}
                   {config.title ? (
-                    <p className="mt-2 text-4xl font-semibold tracking-tight text-pretty text-foreground sm:text-5xl">
+                    <p className="mt-3 text-4xl font-semibold tracking-[-0.045em] text-pretty text-foreground sm:text-5xl sm:leading-[1.06]">
                       <Trans message={config.title} />
                     </p>
                   ) : null}
                   {config.description ? (
-                    <p className="mt-6 text-lg/8 text-muted-foreground">
+                    <p className="mt-5 text-lg/8 text-muted-foreground">
                       <Trans message={config.description} />
                     </p>
                   ) : null}
-                  <div className="mt-10 max-w-xl space-y-8 text-base/7 text-muted-foreground lg:max-w-none">
+                  <div className="mt-10 max-w-xl space-y-5 text-base/7 text-muted-foreground lg:max-w-none">
                     {config.features?.map(feature => (
                       <div
                         key={feature.title}
-                        className="flex items-start gap-x-4.5"
+                        className="flex items-start gap-x-4.5 rounded-xl border border-transparent p-3 -ml-3 transition-colors hover:border-border/70 hover:bg-muted/55"
                       >
                         {feature.icon ? (
                           config.wrapIconsInBg ? (
@@ -124,7 +124,7 @@ export function FeatureWithScreenshot({config}: Props) {
                       width={config.image.width}
                       height={config.image.height}
                       className={cn(
-                        'max-w-none rounded-xl border shadow-xl md:-ml-4 lg:ml-0',
+                        'max-w-none rounded-2xl border border-border/80 shadow-2xl shadow-primary/10 md:-ml-4 lg:ml-0',
                         getImageWidth(config),
                       )}
                     />

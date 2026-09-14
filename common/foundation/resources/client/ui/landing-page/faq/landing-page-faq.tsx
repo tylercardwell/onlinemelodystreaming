@@ -23,7 +23,7 @@ export function LandingPageFaq({config}: LandingPageFaqProps) {
     <div
       className={cn(
         'py-24 sm:py-32',
-        config.mutedBg && 'bg-muted/40 dark:bg-card',
+        config.mutedBg && 'bg-muted/55 dark:bg-card',
       )}
     >
       <div className="mx-auto max-w-4xl px-6 lg:px-8">
@@ -34,7 +34,7 @@ export function LandingPageFaq({config}: LandingPageFaqProps) {
             </p>
           ) : null}
           {config.title ? (
-            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-pretty text-foreground sm:text-5xl">
+            <h2 className="mt-3 text-4xl font-semibold tracking-[-0.045em] text-pretty text-foreground sm:text-5xl sm:leading-[1.06]">
               <Trans message={config.title} />
             </h2>
           ) : null}
@@ -45,13 +45,13 @@ export function LandingPageFaq({config}: LandingPageFaqProps) {
           ) : null}
         </div>
         {config.questions?.length ? (
-          <Accordion variant={config.variant} className="mt-16 sm:mt-20">
+          <Accordion variant={config.variant} className="mt-14 overflow-hidden rounded-2xl border border-border/70 bg-background/50 px-2 shadow-sm sm:mt-16">
             {config.questions.map((item, index) => (
               <Accordion.Item key={item.question} value={`${index}`}>
-                <Accordion.Trigger className="p-5 text-base">
+                <Accordion.Trigger className="p-5 text-base font-semibold transition-colors hover:text-primary">
                   <Trans message={item.question} />
                 </Accordion.Trigger>
-                <Accordion.Content className="p-5 text-base text-muted-foreground">
+                <Accordion.Content className="px-5 pb-5 text-base text-muted-foreground">
                   <Trans message={item.answer} />
                 </Accordion.Content>
               </Accordion.Item>
