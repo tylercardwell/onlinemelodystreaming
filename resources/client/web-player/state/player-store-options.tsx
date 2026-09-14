@@ -18,10 +18,9 @@ import {Trans} from '@ui/i18n/trans';
 // used to track play history for logging plays on backend (prevents logging play twice, unless track is fully played)
 const trackPlays = new Set<number>();
 
-const PREVIEW_DURATION_SECONDS = 30;
 // Start just before the media ends so the player cannot advance the queue
 // before the preview message is displayed.
-const PREVIEW_LIMIT_TRIGGER_SECONDS = PREVIEW_DURATION_SECONDS - 0.5;
+const PREVIEW_LIMIT_TRIGGER_SECONDS = 29.5;
 // Tracks which have already shown the preview limit toast. This prevents it
 // from reappearing on every progress event after the player is paused.
 const previewLimitShown = new Set<number>();
@@ -142,15 +141,8 @@ export const playerStoreOptions: Partial<PlayerStoreOptions> = {
         previewLimitShown.delete(cuedMedia.meta.id);
       }
     },
-    progress: ({currentTime, state: {cuedMedia, mediaDuration, pause}}) => {
-      // Only limit media that is itself a 30-second preview. Uploaded and
-      // otherwise full-length tracks must continue playing for signed-in users.
-      if (
-        !cuedMedia ||
-        mediaDuration <= 0 ||
-        mediaDuration > PREVIEW_DURATION_SECONDS + 0.5 ||
-        currentTime < PREVIEW_LIMIT_TRIGGER_SECONDS
-      ) {
+    progress: ({currentTime, state: {cuedMedia, pause}}) => {
+      if (!cuedMedia || currentTime < PREVIEW_LIMIT_TRIGGER_SECONDS) {
         return;
       }
 

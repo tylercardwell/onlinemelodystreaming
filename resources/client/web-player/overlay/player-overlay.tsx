@@ -131,6 +131,7 @@ function PlayerContent({overlayRef}: PlayerContentProps) {
         >
           <PlayerPoster
             className="absolute inset-0"
+            hideDuringPlayback={haveVideo}
             fallback={
               cuedTrack ? (
                 <TrackImage
